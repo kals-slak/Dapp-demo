@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo</title>
+</head>
+<body>
+    <div>
+        <input type="text" id="val">
+        <button id="set">Set</button>
+        <button id="get">Get</button>
+        <p id="data">data</p>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.5/web3.min.js" integrity="sha512-/T7YwzOsNeoNkuTfYKXn3CrJCGc5cnC8T4QW46Hy+3Xjdjrxzokmbx8M8Xavjq1K7dN4958kIRGy4J03VRIlSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        var contract;
+        
+
+        $(document).ready(function(){
+            web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:7545");
+            var address = "0x3D77282C52501CD20df43533A8a6F58c4cF40B23";
+            //const abiJson = fs.readFileSync('ab.json');
+            //var abi = JSON.parse(abiJson);
+            contract = new web3.eth.Contract([
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_greeting",
+				"type": "string"
+			}
+		],
+		"name": "SetGreeting",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "greet",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "greeting",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+],address);
+            
+            contract.methods.greet().call().then(function(data){
+                $('#data').html(data);
+            })
+        })
+
+        $('#set').click(function(){
+            var val = $('#val').val();
+            web3.eth.getAccounts(console.log).then(function(accounts){
+                var acc = accounts[0];
+                return contract.methods.SetGreeting(val).send({from:acc});
+            }).then(function(tx){
+                console.log(tx);
+            }).catch(function(tx){
+                console.log(tx);
+            })
+        })
+
+        $('#get').click(function(){
+            contract.methods.greet().call().then(function(data){
+                $('#data').html(data);
+            })
+        })
+    </script>
+</body>
+</html>
